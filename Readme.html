@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Host-Network (Hone) Packet-Process Correlator Wireshark Live-Capture Shim</title>
+</head>
+
+<body>
+<h1>Host-Network (Hone) Packet-Process Correlator Wireshark Live-Capture Shim</h1>
+
+<p>Copyright &copy; 2014 Battelle Memorial Institute<br />
+Licensed under a modification of the 3-clause BSD license<br />
+See <a href="License.txt">License.txt</a> for the full text of the license and additional disclaimers</p>
+
+<hr />
+
+<h2>Table of Contents</h2>
+
+<ul>
+	<li><a href="#Introduction">Introduction</a></li>
+	<li><a href="#Building">Building</a>
+		<ul>
+		<li><a href="#BuildingOnWindows">Building on Windows</a></li>
+		<li><a href="#BuildingOnLinux">Building on Linux</a></li>
+		</ul>
+	</li>
+	<li><a href="#Installing">Installing</a>
+		<ul>
+		<li><a href="#InstallingOnWindows">Installing on Windows</a></li>
+		<li><a href="#InstallingOnLinux">Installing on Linux</a></li>
+		</ul>
+	</li>
+	<li><a href="#Uninstalling">Uninstalling</a>
+		<ul>
+		<li><a href="#UninstallingOnWindows">Uninstalling on Windows</a></li>
+		<li><a href="#UninstallingOnLinux">Uninstalling on Linux</a></li>
+		</ul>
+	</li>
+	<li><a href="#Using">Using</a></li>
+	<li><a href="#HowItWorks">How It Works</a>
+		<ul>
+		<li><a href="#GettingListOfInterfaces">Getting the List of Interfaces</a></li>
+		<li><a href="#GettingLinkTypeForInterface">Getting Link Types for an Interface</a></li>
+		<li><a href="#StartingDataCapture">Starting Data Capture</a></li>
+		</ul>
+	</li>
+	<li><a href="#Developers">Developers</a></li>
+</ul>
+
+<hr />
+
+<h2><a name="Introduction"></a>Introduction</h2>
+
+<p>The Host-Network (Hone) Packet-Process Correlator Wireshark Live-Capture Shim enables live capture from the Hone driver in
+Wireshark. The Hone shim program, <tt>hone-dumpcap</tt>, sits between Wireshark and dumpcap (hence the name &ldquo;shim&rdquo;).</p>
+
+<hr />
+
+<h2><a name="Building"></a>Building</h2>
+
+<p>The following software must be installed in order to build the shim:</p>
+
+<dl>
+	<dt><a href="https://qt-project.org/downloads">Qt 5.3</a></dt>
+	<dd>Used to build the shim and Windows hook program</dd>
+
+	<dt><a href="http://www.activestate.com/activepython/downloads">Python 2.7</a></dt>
+	<dd>Used to run the Windows build script (<i>Windows only</i>)</dd>
+
+	<dt><a href="https://www.microsoft.com/visualstudio/eng/">Visual Studio 2012</a></dt>
+	<dd>Used to build the executables (<i>Windows only</i>)</dd>
+
+	<dt><a href="http://www.jrsoftware.org/isinfo.php">Inno Setup 5.5</a></dt>
+	<dd>Used to create the Windows installer executable (<i>Windows only</i>)</dd>
+</dl>
+
+<h3><a name="BuildingOnWindows"></a>Building on Windows</h3>
+
+<p>On Windows, you can build an installer that includes the shim and a hook program to integrate the shim into Wireshark
+installations. To build the installer, open a Qt 5.3 command window with Administrator privileges, change to the directory that
+contains the Hone shim source code, and run the following command:</p>
+
+<pre>
+	build.py -v VERSION</pre>
+
+Where <i>VERSION</i> is the version number to use for the build. Note that the Qt 5.3 command window must run as Administrator to
+configure the Visual Studio 2012 environment properly, since Qt uses Visual Studio to compile the executables. If the Visual Studio
+2012 environment isn't configured, the build script will show you how to configure the environment. To get help for the various
+build options, run:
+
+<pre>
+	build.py -h</pre>
+
+<p>The build script places the files in the <tt>hone_ws_<i>VERSION</i></tt> directory. The script will use Inno Setup to create
+an installer, and, if successful, it will place an installer executable named <tt>Hone-WS-<i>VERSION</i>-win7.exe</tt> in the
+<tt>installers</tt> subdirectory. It will also place the debugging symbols in the <tt>debug_symbols</tt> subdirectory.</p>
+
+<h3><a name="BuildingOnLinux"></a>Building on Linux</h3>
+
+<ol>
+	<li>Open <tt>hone-dumpcap.pro</tt> in Qt Creator and click the <tt>Configure Project</tt> button</li>
+	<li>Select Debug or Release build, and click the hammer icon in the lower left corner to build</li>
+	<li>Qt Creator will create a program called <tt>hone-dumpcap</tt> in the selected build directory</li>
+</ol>
+
+<p>You can also build <tt>hone-dumpcap</tt> from the command line by running the following commands:</p>
+
+<pre>
+	mkdir build
+	cd build
+	qmake /path/to/hone-dumpcap.pro
+	make</pre>
+
+<hr />
+
+<h2><a name="Installing"></a>Installing</h2>
+
+<p>Prior to installing the shim, you should install a <a
+href="https://github.com/HoneProject/Wireshark-Shim/wiki/Hone-Enhanced-Wireshark">Hone enhanced version of Wireshark</a> 1.10.2.
+While the shim will work with a stock version of Wireshark 1.10.2, you will not be able to see the Hone-specific information added
+to the <a href="https://github.com/HoneProject/Linux-Sensor/wiki/Augmented-PCAP-Next-Generation-Dump-File-Format">augmented
+PCAP-NG</a> file. If you use the shim with a different version of Wireshark, live captures from Wireshark may cease to function
+properly.</p>
+
+<h3><a name="InstallingOnWindows"></a>Installing on Windows</h3>
+
+<p>Double-click on the installer file to run the installer, and follow the prompts. The installer will automatically add the shim
+to any Wireshark installations under the standard 32-bit or 64-bit Program Files directories. It will also create shortcuts under
+<tt>Start</tt> &rarr; <tt>Programs</tt> &rarr; <tt>PNNL</tt> &rarr; <tt>Hone Wireshark Live-Capture Shim</tt> to control the
+shim.</p>
+
+<p>If you have installed Wireshark in a non-standard location, you will need to manually add the shim to the Wireshark
+installation:</p>
+
+<ol>
+	<li>Open the Wireshark shim folder in Windows Explorer (<tt>C:\Program Files\PNNL\Hone Wireshark Live-Capture Shim</tt> or
+		<tt>C:\Program Files (x86)\PNNL\Hone Wireshark Live-Capture Shim</tt> by default).</li>
+	<li>Select <tt>hone-dumpcap.exe</tt> and all of the DLLs</li>
+	<li>Right-click and select <tt>Copy</tt></li>
+	<li>Open the Wireshark installation folder in Windows Explorer</li>
+	<li>Right-click and select <tt>Paste</tt></li>
+	<li>Rename <tt>dumpcap.exe</tt> to <tt>dumpcap_orig.exe</tt></li>
+	<li>Rename <tt>hone-dumpcap.exe</tt> to <tt>dumpcap.exe</tt></li>
+</ol>
+
+<h3><a name="InstallingOnLinux"></a>Installing on Linux</h3>
+
+<p>There are two ways to install the shim on Linux.</p>
+
+<h4>In an existing Wireshark directory</h4>
+
+<p>This method is similar to the Windows installation, and may be required for Wireshark plugins to work while using the shim.
+However, it is more intrusive than the second method.  To install in an existing Wireshark directory:</p>
+
+<ol>
+	<li>In the Wireshark directory, rename <tt>dumpcap</tt> to <tt>dumpcap_orig</tt></li>
+	<li>Copy <tt>hone-dumpcap</tt> to the Wireshark directory and rename it to <tt>dumpcap</tt></li>
+</ol>
+
+<h4>Using symlinks</h4>
+
+<p>This method is less intrusive than installing in an existing Wireshark directory, but plugins may not work. To install using
+symlinks:</p>
+
+<ol>
+	<li>Create a directory to hold the symlinks</li>
+	<li>Create symlinks to <tt>wireshark</tt> and <tt>dumpcap</tt></li>
+	<li>Copy <tt>hone-dumpcap</tt> to the directory and rename it to <tt>dumpcap</tt></li>
+</ol>
+
+<p>For example, if the directory is <tt>/opt/hone-wireshark</tt>, you would run:</p>
+
+<pre>
+	sudo mkdir /opt/hone-wireshark
+	sudo ln -s /usr/local/bin/wireshark /opt/hone-wireshark/wireshark
+	sudo ln -s /usr/local/bin/dumpcap /opt/hone-wireshark/dumpcap_orig
+	sudo cp hone-dumpcap /opt/hone-wireshark/dumpcap</pre>
+
+<hr />
+
+<h2><a name="Uninstalling"></a>Uninstalling</h2>
+
+<h3><a name="UninstallingOnWindows"></a>Uninstalling on Windows</h3>
+
+<p>To uninstall the shim, use <tt>Start</tt> &rarr; <tt>Programs</tt> &rarr; <tt>PNNL</tt> &rarr; <tt>Hone Wireshark Live-Capture
+Shim</tt> &rarr; <tt>Uninstall Hone Wireshark Live-Capture Shim</tt> or <tt>Programs and Features</tt> in the Control Panel.</p>
+
+<p>If you manually added the shim to any Wireshark installations that are in non-standard locations, you will also need to manually
+uninstall the shim:</p>
+
+<ol>
+	<li>Open the Wireshark installation folder in Windows Explorer</li>
+	<li>Delete <tt>dumpcap.exe</tt></li>
+	<li>Rename <tt>dumpcap_orig.exe</tt> to <tt>dumpcap.exe</tt></li>
+	<li>Optionally, remove any DLLs that were copied over with the shim</li>
+</ol>
+
+<h3><a name="UninstallingOnLinux"></a>Uninstalling on Linux</h3>
+
+<h4>When installed in an existing Wireshark directory</h4>
+
+<p>In the Wireshark directory, delete <tt>dumpcap</tt> and rename <tt>dumpcap_orig</tt> to <tt>dumpcap</tt>.</p>
+
+<h4>When installed using symlinks</h4>
+
+<p>Delete the <tt>/opt/hone-wireshark</tt> directory.</p>
+
+<hr />
+
+<h2><a name="Using"></a>Using</h2>
+
+<ol>
+	<li>Ensure that Hone is installed, using the instructions for your system
+		(<a href="https://github.com/HoneProject/Linux-Sensor">Linux</a> or
+		<a href="https://github.com/HoneProject/Windows-Sensor">Windows</a>)</li>
+	<li>Run Wireshark as root (Linux) or Administrator (Windows)</li>
+	<li>Select <tt>Hone</tt> from the list of interfaces</li>
+	<li>Click <tt>Start</tt>
+</ol>
+
+<p><b>Notes:</b></p>
+
+<ul>
+	<li>Since the Hone driver requires root/Administrator access, Wireshark must also run as root or Administrator to provide the
+		necessary privileges to the shim.</li>
+	<li>You will need to add the shim back to the Wireshark installation in the following circumstances:
+		<ul>
+			<li>On Windows, if you install the shim before you install Wireshark</li>
+			<li>On Windows, if you upgrade Wireshark</li>
+			<li>On Linux, if you install the shim in an existing Wireshark directory and you upgrade Wireshark</li>
+		</ul>
+		To add the shim back to the Wireshark installation:
+		<ul>
+			<li>On Windows, run <tt>Start</tt> &rarr; <tt>Programs</tt> &rarr; <tt>PNNL</tt> &rarr; <tt>Hone Wireshark Live-Capture
+				Shim</tt> &rarr; <tt>Set Wireshark Shim</tt></li>
+			<li>On Linux, follow the installation instructions again</li>
+		</ul></li>
+	<li>If you experience any problems with the Windows installation, you can use <tt>Start</tt> &rarr; <tt>Programs</tt> &rarr;
+		<tt>PNNL</tt> &rarr; <tt>Hone Wireshark Live-Capture Shim</tt> &rarr; <tt>Unset Wireshark Shim</tt> to remove the shim from the
+		Wireshark installation without uninstalling the program.</li>
+</ul>
+
+<hr />
+
+<h2><a name="HowItWorks"></a>How It Works</h2>
+
+<p>Wireshark uses the dumpcap program to capture data from network interfaces. It expects that dumpcap is installed in the same
+directory as Wireshark, and that it is called <tt>dumpcap</tt> (Linux) or <tt>dumpcap.exe</tt> (Windows). Wireshark makes three
+different types of calls to dumpcap:</p>
+
+<ol>
+	<li>Get the list of interfaces</li>
+	<li>Get link types for an interface</li>
+	<li>Start capturing data from an interface</li>
+</ol>
+
+<p>Wireshark calls dumpcap with a special undocumented option, <tt>-Z</tt>, to tell it that it is a child of Wireshark. When
+dumpcap is started with this option, it returns its output in a special format that Wireshark understands. The
+<tt>hone-dumpcap</tt> shim implements the same options as dumpcap, and returns information for a special pseudo-interface called
+<tt>Hone</tt> in the same format as dumpcap. It also calls the original dumpcap, renamed to <tt>dumpcap_orig</tt> (Linux) or
+<tt>dumpcap_orig.exe</tt> (Windows), to handle requests from Wireshark for other network interfaces.</p>
+
+<h3><a name="GettingListOfInterfaces"></a>Getting the List of Interfaces</h3>
+
+<p>To get the list of interfaces, Wireshark calls dumpcap with the following options (adding <tt>.exe</tt> for Windows):</p>
+
+<pre>
+	dumpcap -D -Z none</pre>
+
+<p>The shim calls the original dumpcap program to get the list of network interfaces, inserts the <tt>Hone</tt> device at the head
+of the list, and writes the new list to stdout. For example (where <tt>\t</tt> is a tab and <tt>\0</tt> is a null):</p>
+
+<h4>Windows</h4>
+
+<pre>
+	1. Hone\tHone capture pseudo-interface\tHone\t\t\tnetwork
+	2. \Device\NPF_{A382A201-2748-4D83-9D45-B190A8AE0E8D}\tBroadcom NetXtreme Gigabit Ethernet Driver\tLocal Area Connection\tfe80::a5a9:f9ed:503a:78a7,203.0.113.10\tnetwork
+	3. \Device\NPF_{E4EF329B-35BE-4BF6-9972-D633C95F7178}\tSun\tVirtualBox Host-Only Network\tfe80::98da:7db0:46ce:4863,192.168.42.13\tnetwork</pre>
+
+<h4>Linux</h4>
+
+<pre>
+	1. Hone\t\tHone capture pseudo-interface\t0\t\tnetwork
+	2. eth1\t\t\t0\t203.0.113.10\tnetwork
+	3. any\t\tPseudo-device that captures on all interfaces\t0\t\tnetwork
+	4. lo\t\tLoopback\t0\t127.0.0.1\tloopback</pre>
+
+<p>The shim then writes a special command to stderr to tell Wireshark that it
+finished successfully:</p>
+
+<pre>
+	S\0\0\0</pre>
+
+<h3><a name="GettingLinkTypeForInterface"></a>Getting Link Types for an
+Interface</h3>
+
+<p>If the shim is called with an interface option of <tt>1</tt> or <tt>Hone</tt>, it handles the call itself. Otherwise, it passes
+the call on to the original dumpcap, decrementing the interface indexes by one (since the interface indexes were all increased
+by one when the shim inserted Hone at the head of the interface list).</p>
+
+<p>When the shim handles the call itself, it simply returns a NULL link type, which has the same format on both Linux and
+Windows:</p>
+
+<pre>
+	0
+	0\tNULL\tNULL</pre>
+
+<p>Again, the shim writes a special command to stderr to tell Wireshark that it finished successfully:</p>
+
+<pre>
+	S\0\0\0</pre>
+
+<h3><a name="StartingDataCapture"></a>Starting Data Capture</h3>
+
+<p>Similar to the way that the shim handles getting link types, if it is called with an interface option of <tt>1</tt> or
+<tt>Hone</tt>, it handles the call itself, and if it is called with any other options, it passes the call on to the original
+dumpcap. When it handles the call itself, there are a number of special commands that it needs to send back to Wireshark. All of
+these commands go to stderr:</p>
+
+<ul>
+	<li><p><b>Capture file opened:</b> This is sent whenever the shim opens a new file to hold captured data. Wireshark reads the
+		data from this file after the shim writes it. The command format is (with spaces between the elements for clarity):</p>
+
+		<p><tt>F <i>lll</i> <i>filename</i>\0</tt></p>
+
+		<p>Where <i>lll</i> is the three-byte length of the filename with the terminating null, and <i>filename</i> is the absolute
+		path to the capture file. For example (where <tt>\nn</tt> is the hexadecimal byte value):</p>
+
+		<pre>F \00\00\2f /tmp/hone_dumpcap_20130304093417_J28848.pcapng\0</pre></li>
+
+	<li><p><b>Packet count:</b> This is sent whenever the shim writes captured data to the file. Even though the shim is writing
+		PCAP-NG blocks, which may or may not be packet data, Wireshark still thinks in terms of packets. The command format is:</p>
+
+		<p><tt>P <i>lll</i> <i>count</i>\0</tt></p>
+
+		<p>Where <i>lll</i> is the three-byte length of the count string with the terminating null, and <i>count</i> is a
+		decimal-formatted string with the number of PCAP-NG blocks written to the file since the last packet count report. For
+		example:</p>
+
+		<pre>P \00\00\04 109\0</pre></li>
+
+	<li><p><b>Error message:</b> This is sent whenever the shim encounters an error. The command format is:</p>
+
+		<p><tt>E <i>ttt</i> E <i>ppp</i> <i>pri</i>\0 E <i>sss</i> <i>sec</i>\0</tt></p>
+
+		<p>Where <i>ttt</i> is the three-byte total error message length, <i>ppp</i> and <i>sss</i> are the three-byte lengths of the
+		primary and secondary error messages with terminating nulls, respectively, and <i>pri</i> and <i>sec</i> are the primary and
+		secondary error messages, respectively. Even if there is no secondary error message, the format still requires an empty
+		null-terminated string. For example, if the shim cannot open the driver, the error message may be formatted as:</p>
+
+		<pre>E \00\00\39 E \00\00\30 Cannot open driver /dev/hone: Permission denied\0 E \00\00\01 \0</pre></li>
+
+</ul>
+
+<p>When Wireshark is capturing data on Windows, it uses a named pipe to signal the shim to exit. The shim simply peeks at this pipe
+periodically to check if the pipe still exists or if Wireshark has written any data to it. If the pipe doesn't exist, or if there
+is any data, it assumes that Wireshark is signaling for it to exit. The pipe is not used for any other communication, and Wireshark
+does not use it on Linux.</p>
+
+<hr />
+
+<h2><a name="Developers"></a>Developers</h2>
+
+<p>The Host-Network (Hone) Packet-Process Correlator Wireshark Live-Capture
+Shim was developed at Pacific Northwest National Laboratory by:</p>
+
+<ul>
+	<li>Richard L. Griswold</li>
+</ul>
+
+</body>
+</html>

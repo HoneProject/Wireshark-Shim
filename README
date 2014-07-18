@@ -1,0 +1,20 @@
+Hone (Host-Network) Packet-Process Correlator Wireshark Live-Capture Shim
+
+Copyright (c) 2014 Battelle Memorial Institute
+Licensed under a modification of the 3-clause BSD license
+See License.txt for the full text of the license and additional disclaimers
+
+Author: Richard L. Griswold
+
+
+H   H  OOO  N   N EEEEE     SSSS H   H IIIII M   M
+H   H O   O NN  N E        S     H   H   I   MM MM
+HHHHH O   O N N N EEEE      SSS  HHHHH   I   M M M
+H   H O   O N  NN E            S H   H   I   M   M
+H   H  OOO  N   N EEEEE    SSSS  H   H IIIII M   M
+
+
+The Hone (Host-Network) Packet-Process Correlator Wireshark Live-Capture Shim
+enables live capture from the Hone driver in Wireshark. For information on
+building, installing, and using the shim, as well as technical information
+about the inner workings of the shim, see the Readme.html file.

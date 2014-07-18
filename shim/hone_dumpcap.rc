@@ -1,0 +1,24 @@
+//----------------------------------------------------------------------------
+// Hone dumpcap replacement
+//
+// Copyright (c) 2014 Battelle Memorial Institute
+// Licensed under a modification of the 3-clause BSD license
+// See License.txt for the full text of the license and additional disclaimers
+//
+// Authors
+//   Richard L. Griswold <richard.griswold@pnnl.gov>
+//----------------------------------------------------------------------------
+
+#include <windows.h>
+#include <ntverp.h>
+#include "hone_dumpcap_info.h"
+
+#define VER_FILETYPE             VFT_APP
+#define VER_FILESUBTYPE          VFT2_UNKNOWN
+#define VER_FILEDESCRIPTION_STR  HONE_DUMPCAP_DESCRIPTION_STR
+#define VER_INTERNALNAME_STR     HONE_DUMPCAP_NAME_STR
+#define VER_ORIGINALFILENAME_STR HONE_DUMPCAP_NAME_STR
+#define VER_FILEVERSION          HONE_DUMPCAP_VERSION
+#define VER_FILEVERSION_STR      HONE_DUMPCAP_VERSION_STR
+
+#include "common.ver"
